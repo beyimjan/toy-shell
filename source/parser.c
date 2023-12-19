@@ -8,6 +8,7 @@ struct parser_t create_parser()
   parser.word_length = 0;
   parser.buf = malloc(parser.buflen);
   parser.double_quote_expected = 0;
+  parser.escape_next_char = 0;
   parser.res = pr_ignore;
   return parser;
 }
@@ -15,7 +16,9 @@ struct parser_t create_parser()
 void stop_parser(struct parser_t *parser)
 {
   parser->buf[parser->word_length] = '\0';
-  if (parser->double_quote_expected)
+  if (parser->escape_next_char)
+    parser->res = pr_error_unfinished_escape_sequence;
+  else if (parser->double_quote_expected)
     parser->res = pr_error_missing_closing_quote;
   else if (parser->res == pr_ignore && parser->word_length == 0)
     parser->res = pr_ignore_parsed;
@@ -23,9 +26,34 @@ void stop_parser(struct parser_t *parser)
     parser->res = pr_parsed;
 }
 
+void escape_char(struct parser_t *parser, char c)
+{
+  switch (c) {
+    case '\\':
+    case '"':
+    case ' ':
+    case '\t': {
+      parser->escape_next_char = 0;
+      break;
+    }
+    default: {
+      parser->res = pr_error_invalid_char_escaped;
+    }
+  }
+}
+
 void parse_char(struct parser_t *parser, char c)
 {
-  if (c == '"') {
+  if (parser->escape_next_char) {
+    escape_char(parser, c);
+    if (parser->res == pr_error_invalid_char_escaped)
+      return;
+  }
+  else if (c == '\\') {
+    parser->escape_next_char = 1;
+    return;
+  }
+  else if (c == '"') {
     parser->double_quote_expected = !parser->double_quote_expected;
     parser->res = pr_in_progress;
     return;

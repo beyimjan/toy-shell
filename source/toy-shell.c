@@ -30,9 +30,17 @@ char *read_word(enum read_word_res *res, int *quit)
     }
   }
 
-  if (parser.res == pr_error_missing_closing_quote) {
+  if (parser.res == pr_error_unfinished_escape_sequence) {
+    *res = rwr_parsing_error;
+    fputs("Error: unfinished escape sequence.\n", stderr);
+  }
+  else if (parser.res == pr_error_missing_closing_quote) {
     *res = rwr_parsing_error;
     fputs("Error: missing closing quote.\n", stderr);
+  }
+  else if (parser.res == pr_error_invalid_char_escaped) {
+    *res = rwr_parsing_error;
+    fputs("Error: invalid character escaped.\n", stderr);
   }
 
   if (parser.res == pr_parsed) {

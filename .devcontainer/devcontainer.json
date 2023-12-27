@@ -1,0 +1,9 @@
+{
+  "postCreateCommand": "npm install -g aicommits",
+  "postStartCommand": "aicommits config set generate=5 model=gpt-3.5-turbo",
+  "customizations": {
+    "vscode": {
+      "extensions": ["llvm-vs-code-extensions.vscode-clangd"]
+    }
+  }
+}

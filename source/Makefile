@@ -13,8 +13,6 @@ all: $(PROG)
 
 build: clean $(PROG)
 
-macos: clean $(PROG)
-
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $< -o $@
 

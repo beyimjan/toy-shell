@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include "parser.h"
 #include "words.h"
 
@@ -52,6 +54,26 @@ char *read_word(enum read_word_res *res, int *quit)
   }
 }
 
+void invoke_command(char *const *argv)
+{
+  int pid;
+
+  pid = fork();
+  if (pid == -1) {
+    perror("fork");
+    exit(1);
+  }
+
+  if (pid == 0) /* child process */
+  {
+    execvp(argv[0], argv);
+    perror(argv[0]);
+    exit(2);
+  }
+  /* parent process */
+  wait(NULL);
+}
+
 int main()
 {
   int quit = 0;
@@ -75,7 +97,7 @@ int main()
         break;
     }
 
-    print_words(words);
+    invoke_command(words.buf);
   cleanup:
     free_words(&words);
   }

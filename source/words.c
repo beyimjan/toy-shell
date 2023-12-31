@@ -1,5 +1,6 @@
 #include "words.h"
 #include <stdlib.h>
+#include "debug.h"
 
 struct words_t init_words()
 {
@@ -12,6 +13,11 @@ struct words_t init_words()
 
 void add_word(struct words_t *words, char *word)
 {
+#if DEBUG_LEVEL >= 3
+  DEBUG_TRACE_SVAR(word);
+  DEBUG_TRACE_DVAR(words->word_count);
+#endif
+
   if (words->buf_size == words->word_count + 1) {
     words->buf_size *= 2;
     words->buf = realloc(words->buf, words->buf_size * sizeof(*words->buf));

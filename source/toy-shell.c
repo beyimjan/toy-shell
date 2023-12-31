@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include "debug.h"
 #include "parser.h"
 #include "words.h"
 
@@ -15,19 +16,31 @@ char *read_word(enum read_word_res *res, int *quit)
 
   while (parser.res == pr_ignore || parser.res == pr_in_progress) {
     char c = getchar();
+#if DEBUG_LEVEL >= 3
+    DEBUG_TRACE_CVAR(c);
+#endif
 
     if (c == EOF) {
+#if DEBUG_LEVEL >= 2
+      DEBUG_TRACE("Parsing finished because of EOF.");
+#endif
       *res = rwr_exec;
       *quit = 1;
       stop_parser(&parser);
       break;
     }
     else if (c == '\n') {
+#if DEBUG_LEVEL >= 2
+      DEBUG_TRACE("Parsing finished because of newline.");
+#endif
       *res = rwr_exec;
       stop_parser(&parser);
       break;
     }
     else {
+#if DEBUG_LEVEL >= 3
+      DEBUG_TRACE("Parsing in progress.");
+#endif
       parse_char(&parser, c);
     }
   }
@@ -44,6 +57,10 @@ char *read_word(enum read_word_res *res, int *quit)
     *res = rwr_parsing_error;
     fputs("Error: invalid character escaped.\n", stderr);
   }
+
+#if DEBUG_LEVEL >= 2
+  DEBUG_TRACE_DVAR(parser.res);
+#endif
 
   if (parser.res == pr_parsed) {
     return parser.buf;
@@ -88,10 +105,15 @@ int main()
 
       word = read_word(&rw_res, &quit);
 
-      if (rw_res == rwr_parsing_error)
+      if (rw_res == rwr_parsing_error) {
         goto cleanup;
-      else if (word != NULL)
+      }
+      else if (word != NULL) {
+#if DEBUG_LEVEL >= 2
+        DEBUG_TRACE_SVAR(word);
+#endif
         add_word(&words, word);
+      }
 
       if (rw_res == rwr_exec)
         break;

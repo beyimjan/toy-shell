@@ -1,7 +1,7 @@
 CC = gcc
 
 ifneq (build, $(MAKECMDGOALS))
-CFLAGS = -g -Wall -Wextra -DDEBUG_LEVEL=0
+CFLAGS = -g -Wall -Wextra -DDEBUG_LEVEL=1
 endif
 
 SRCS = $(filter-out toy-shell.c, $(wildcard *.c))

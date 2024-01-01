@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/wait.h>
 #include <unistd.h>
+#include "core.h"
 #include "debug.h"
 #include "parser.h"
 #include "words.h"
@@ -71,24 +71,11 @@ char *read_word(enum read_word_res *res, int *quit)
   }
 }
 
-void invoke_command(char *const *argv)
+static void print_prompt()
 {
-  int pid;
-
-  pid = fork();
-  if (pid == -1) {
-    perror("fork");
-    exit(1);
-  }
-
-  if (pid == 0) /* child process */
-  {
-    execvp(argv[0], argv);
-    perror(argv[0]);
-    exit(2);
-  }
-  /* parent process */
-  wait(NULL);
+  char *cwd = getcwd(NULL, 0);
+  printf("%s> ", cwd);
+  free(cwd);
 }
 
 int main()
@@ -96,9 +83,10 @@ int main()
   int quit = 0;
 
   while (!quit) {
-    struct words_t words = init_words();
-    fputs("toy-shell> ", stdout);
+    if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
+      print_prompt();
 
+    struct words_t words = init_words();
     for (;;) {
       enum read_word_res rw_res;
       char *word;
@@ -119,7 +107,7 @@ int main()
         break;
     }
 
-    invoke_command(words.buf);
+    invoke_command(words.word_count, words.buf);
   cleanup:
     free_words(&words);
   }

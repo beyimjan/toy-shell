@@ -26,7 +26,7 @@ void stop_parser(struct parser_t *parser)
     parser->res = pr_parsed;
 }
 
-void escape_char(struct parser_t *parser, char c)
+static void escape_char(struct parser_t *parser, char c)
 {
   switch (c) {
     case '\\':

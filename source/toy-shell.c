@@ -8,7 +8,7 @@
 
 enum read_word_res { rwr_ok, rwr_exec, rwr_parsing_error };
 
-char *read_word(enum read_word_res *res, int *quit)
+static char *read_word(enum read_word_res *res, int *quit)
 {
   struct parser_t parser = create_parser();
 

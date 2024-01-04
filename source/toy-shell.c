@@ -107,7 +107,12 @@ int main()
         break;
     }
 
-    invoke_command(words.word_count, words.buf);
+    if (words.word_count > 0)
+      invoke_command(words.word_count, words.buf);
+#if DEBUG_LEVEL >= 2
+    else
+      DEBUG_TRACE("No command to invoke.");
+#endif
   cleanup:
     free_words(&words);
   }

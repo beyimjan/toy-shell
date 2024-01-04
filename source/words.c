@@ -31,7 +31,7 @@ void add_word(struct words_t *words, char *word)
 void free_words(struct words_t *words)
 {
   char **word = words->buf;
-  while (*word != NULL) {
+  while (*word) {
     free(*word);
     word++;
   }

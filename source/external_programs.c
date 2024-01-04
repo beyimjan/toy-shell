@@ -13,6 +13,15 @@ void run_external_program(char *const *argv)
     exit(1);
   }
 
+  int pgid = setpgid(pid, pid);
+  if (pgid == -1) {
+    perror("setpgid");
+    exit(3);
+  }
+
+  /* ^C should kill the child process, not the shell */
+  tcsetpgrp(STDIN_FILENO, pid);
+
   if (pid == 0) /* child process */
   {
     execvp(argv[0], argv);
@@ -21,5 +30,12 @@ void run_external_program(char *const *argv)
   }
   /* parent process */
   wait(NULL);
+
+  /* Ignore SIGTTOU to prevent the process from being stopped */
+  signal(SIGTTOU, SIG_IGN);
+  /* Give the terminal back to the shell */
+  tcsetpgrp(STDIN_FILENO, getpgid(getpid()));
+  /* Restore the default signal handler */
+  signal(SIGTTOU, SIG_DFL);
 #endif
 }

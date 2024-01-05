@@ -4,6 +4,13 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+static void set_foreground_process_group(pid_t pgid)
+{
+  signal(SIGTTOU, SIG_IGN);
+  tcsetpgrp(STDIN_FILENO, pgid);
+  signal(SIGTTOU, SIG_DFL);
+}
+
 void run_external_program(char *const *argv)
 {
 #ifndef DEBUG_SKIP_RUNNING_EXTERNAL_PROGRAMS
@@ -13,25 +20,19 @@ void run_external_program(char *const *argv)
     return;
   }
 
-  /* ^C should kill the child process, not the shell */
   setpgid(pid, pid);
-  tcsetpgrp(STDIN_FILENO, pid);
 
   if (pid == 0) /* child process */
   {
+    set_foreground_process_group(getpgid(getpid()));
     execvp(argv[0], argv);
     perror(argv[0]);
-    exit(2);
+    exit(1);
   }
 
   /* parent process */
+  set_foreground_process_group(pid);
   wait(NULL);
-
-  /* Ignore SIGTTOU to prevent the process from being stopped */
-  signal(SIGTTOU, SIG_IGN);
-  /* Give the terminal back to the shell */
-  tcsetpgrp(STDIN_FILENO, getpgid(getpid()));
-  /* Restore the default signal handler */
-  signal(SIGTTOU, SIG_DFL);
+  set_foreground_process_group(getpgid(getpid()));
 #endif
 }

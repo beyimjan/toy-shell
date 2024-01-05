@@ -3,7 +3,10 @@
   "postStartCommand": "aicommits config set generate=5 model=gpt-4-1106-preview",
   "customizations": {
     "vscode": {
-      "extensions": ["llvm-vs-code-extensions.vscode-clangd"]
+      "extensions": [
+        "llvm-vs-code-extensions.vscode-clangd",
+        "ms-vscode.makefile-tools"
+      ]
     }
   }
 }

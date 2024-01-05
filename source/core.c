@@ -1,7 +1,7 @@
 #include "core.h"
 #include "builtin_commands.h"
-#include "external_programs.h"
 #include "debug.h"
+#include "external_programs.h"
 
 void invoke_command(int argc, char *const *argv)
 {

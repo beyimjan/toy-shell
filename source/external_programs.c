@@ -10,16 +10,11 @@ void run_external_program(char *const *argv)
   int pid = fork();
   if (pid == -1) {
     perror("fork");
-    exit(1);
-  }
-
-  int pgid = setpgid(pid, pid);
-  if (pgid == -1) {
-    perror("setpgid");
-    exit(3);
+    return;
   }
 
   /* ^C should kill the child process, not the shell */
+  setpgid(pid, pid);
   tcsetpgrp(STDIN_FILENO, pid);
 
   if (pid == 0) /* child process */
@@ -28,6 +23,7 @@ void run_external_program(char *const *argv)
     perror(argv[0]);
     exit(2);
   }
+
   /* parent process */
   wait(NULL);
 

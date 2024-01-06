@@ -7,6 +7,7 @@ static void init_parser_buffer(struct parser_t *parser)
 {
   parser->buflen = 32;
   parser->buf = malloc(parser->buflen);
+  parser->buf[0] = '\0';
   parser->word_length = 0;
   parser->ignore_word = 1;
 }
@@ -22,12 +23,12 @@ static void add_char_to_parser_buffer(struct parser_t *parser, char c)
 
   parser->buf[parser->word_length] = c;
   parser->word_length++;
+  parser->buf[parser->word_length] = '\0';
 }
 
 static void add_word_from_parser_buffer(struct parser_t *parser,
                                         struct words_t *words)
 {
-  parser->buf[parser->word_length] = '\0';
   add_word(words, parser->buf);
   init_parser_buffer(parser);
 }
@@ -38,8 +39,8 @@ struct parser_t create_parser()
   init_parser_buffer(&parser);
   parser.double_quote_expected = 0;
   parser.escape_next_char = 0;
-  parser.res = pr_ignore;
   parser.err = pe_none;
+  parser.res = pr_ignore;
   return parser;
 }
 
@@ -51,8 +52,8 @@ void free_parser(struct parser_t *parser)
 static void log_parsing_error(struct parser_t *parser,
                               enum parsing_error_t err)
 {
-  parser->res = pr_error_occurred;
   parser->err = err;
+  parser->res = pr_error_occurred;
 }
 
 void stop_parser(struct parser_t *parser, struct words_t *words)

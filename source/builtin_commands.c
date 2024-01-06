@@ -41,6 +41,6 @@ void invoke_builtin_command(int argc, char *const *argv)
     invoke_cd(argc, argv);
 #if DEBUG_LEVEL >= 1
   else
-    DEBUG_TRACE("Error: unknown builtin command.");
+    DEBUG_TRACE("Unknown builtin command: %s.\n", cmd);
 #endif
 }

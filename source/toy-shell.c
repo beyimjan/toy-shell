@@ -43,9 +43,8 @@ int main()
       parse_char(&parser, &words, c);
     }
 
-    /* skip the rest of the line */
     if (parser.err == pe_invalid_char_escaped) {
-      for (;;) {
+      for (;;) { /* skip the rest of the line */
         c = getchar();
         if (c == EOF || c == '\n')
           break;

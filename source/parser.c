@@ -72,7 +72,6 @@ void stop_parser(struct parser_t *parser, struct words_t *words)
   }
 
   parser->res = pr_parsed;
-
   if (!parser->ignore_word)
     add_word_from_parser_buffer(parser, words);
 }

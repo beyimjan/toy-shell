@@ -43,10 +43,19 @@ int main()
       parse_char(&parser, &words, c);
     }
 
+    /* skip the rest of the line */
+    if (parser.err == pe_invalid_char_escaped) {
+      for (;;) {
+        c = getchar();
+        if (c == EOF || c == '\n')
+          break;
+      }
+    }
+
     if (parser.res == pr_parsed)
       invoke_command(words.word_count, words.buf);
     else if (parser.res == pr_error_occurred)
-      fprintf(stderr, "%s", get_error_message(parser.err));
+      fputs(get_error_message(parser.err), stderr);
 
     free_words(&words);
     free_parser(&parser);

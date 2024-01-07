@@ -9,15 +9,15 @@ static const char *get_error_message(enum parsing_error_t err)
 {
   switch (err) {
     case pe_unfinished_escape_sequence:
-      return "Error: unfinished escape sequence.\n";
+      return "Error: unfinished escape sequence\n";
     case pe_missing_closing_quote:
-      return "Error: missing closing quote.\n";
+      return "Error: missing closing quote\n";
     case pe_invalid_char_escaped:
-      return "Error: invalid character escaped.\n";
+      return "Error: invalid character escaped\n";
     case pe_none:
-      return "NO ERROR.\n";
+      return "NO ERROR\n";
     default:
-      return "UNKNOWN ERROR.\n";
+      return "UNKNOWN ERROR\n";
   }
 }
 

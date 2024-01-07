@@ -26,6 +26,8 @@ void run_external_program(char *const *argv)
   {
     set_foreground_process_group(getpgid(getpid()));
     execvp(argv[0], argv);
+    if (!argv[0][0])
+      fputs("Error: ", stderr);
     perror(argv[0]);
     exit(1);
   }

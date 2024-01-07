@@ -24,8 +24,8 @@ void add_word(struct words_t *words, char *word)
     words->buf = realloc(words->buf, words->buf_size * sizeof(*words->buf));
   }
   words->buf[words->word_count] = word;
-  words->buf[words->word_count + 1] = NULL;
   words->word_count++;
+  words->buf[words->word_count] = NULL;
 }
 
 void free_words(struct words_t *words)

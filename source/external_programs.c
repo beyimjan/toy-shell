@@ -24,7 +24,7 @@ void run_external_program(char *const *argv)
 
   if (pid == 0) /* child process */
   {
-    set_foreground_process_group(getpgid(getpid()));
+    set_foreground_process_group(getpgid(0));
     execvp(argv[0], argv);
     if (!argv[0][0])
       fputs("Error: ", stderr);
@@ -35,6 +35,6 @@ void run_external_program(char *const *argv)
   /* parent process */
   set_foreground_process_group(pid);
   wait(NULL);
-  set_foreground_process_group(getpgid(getpid()));
+  set_foreground_process_group(getpgid(0));
 #endif
 }
